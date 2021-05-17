@@ -10,6 +10,8 @@ public class VoxelGame : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
+		PrivateDependencyModuleNames.AddRange(new string[] { "ProceduralMeshComponent" });
+
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
 		// Uncomment if you are using Slate UI
