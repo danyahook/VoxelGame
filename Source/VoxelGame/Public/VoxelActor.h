@@ -77,6 +77,9 @@ public:
     UPROPERTY()
         UProceduralMeshComponent* proceduralComponent;
 
+    UFUNCTION(BlueprintCallable)
+        void setVoxel(FVector localPos, int32 value);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
