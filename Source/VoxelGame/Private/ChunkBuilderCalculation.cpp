@@ -55,7 +55,10 @@ void FChunkBuilderCalculation::GenerateChunk()
 				noise_landscape_2d_val = calculateNoiseLandscape2d(x, y);
 				noise_bedrock_2d_val = calculateNoiseBedrock2d(x, y);
 
-				if (z == 50 + noise_landscape_2d_val) {
+				if (RandomStream.FRand() < 0.039 && z == 51 + noise_landscape_2d_val && noise_landscape_2d_val < 10) {
+					treeCenters.Add(FIntVector(x, y, z));
+				}
+				else if (z == 50 + noise_landscape_2d_val) {
 					chunkFields[index_3d] = 3;
 				}
 				else if (z >= 45 + noise_landscape_2d_val && z < 50 + noise_landscape_2d_val) {
@@ -78,41 +81,41 @@ void FChunkBuilderCalculation::GenerateChunk()
 		}
 	}
 
-	//for (FIntVector treeCenter : treeCenters)
-	//{
-	//	int32 tree_heigh = RandomStream.RandRange(3, 6);
-	//	int32 randomX = RandomStream.RandRange(0, 2);
-	//	int32 randomY = RandomStream.RandRange(0, 2);
-	//	int32 randomZ = RandomStream.RandRange(0, 2);
+	for (FIntVector treeCenter : treeCenters)
+	{
+		int32 tree_heigh = RandomStream.RandRange(3, 6);
+		int32 randomX = RandomStream.RandRange(0, 2);
+		int32 randomY = RandomStream.RandRange(0, 2);
+		int32 randomZ = RandomStream.RandRange(0, 2);
 
-	//	for (int32 tree_x = -2; tree_x < 2; tree_x++)
-	//	{
-	//		for (int32 tree_y = -2; tree_y < 2; tree_y++)
-	//		{
-	//			for (int32 tree_z = -2; tree_z < 2; tree_z++)
-	//			{
-	//				if (checkRange(tree_x + treeCenter.X, chunkLineElements) && checkRange(tree_y + treeCenter.Y, chunkLineElements) && checkRange(tree_z + treeCenter.Z, chunkZElements))
-	//				{
-	//					float radius = FVector(tree_x * randomX, tree_y * randomY, tree_z * randomZ).Size();
+		for (int32 tree_x = -2; tree_x < 2; tree_x++)
+		{
+			for (int32 tree_y = -2; tree_y < 2; tree_y++)
+			{
+				for (int32 tree_z = -2; tree_z < 2; tree_z++)
+				{
+					if (checkRange(tree_x + treeCenter.X, chunkLineElements) && checkRange(tree_y + treeCenter.Y, chunkLineElements) && checkRange(tree_z + treeCenter.Z, chunkZElements))
+					{
+						float radius = FVector(tree_x * randomX, tree_y * randomY, tree_z * randomZ).Size();
 
-	//					if (radius <= 2.8)
-	//					{
-	//						if (RandomStream.FRand() < 0.5 || radius <= 1.2)
-	//						{
-	//							int32 index_3ddd = (treeCenter.X + tree_x) + ((treeCenter.Y + tree_y) * chunkLineElements) + ((treeCenter.Z + tree_z + tree_heigh) * chunkLineElementsP2);
-	//							chunkFields[index_3ddd] = 1;
-	//						}
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
+						if (radius <= 2.8)
+						{
+							if (RandomStream.FRand() < 0.5 || radius <= 1.2)
+							{
+								int32 index_3ddd = (treeCenter.X + tree_x) + ((treeCenter.Y + tree_y) * chunkLineElements) + ((treeCenter.Z + tree_z + tree_heigh) * chunkLineElementsP2);
+								chunkFields[index_3ddd] = 1;
+							}
+						}
+					}
+				}
+			}
+		}
 
-	//	for (int32 th_z = 0; th_z < tree_heigh; th_z++) {
-	//		int32 index_3dd = treeCenter.X + (treeCenter.Y * chunkLineElements) + ((treeCenter.Z + th_z) * chunkLineElementsP2);
-	//		chunkFields[index_3dd] = 2;
-	//	}
-	//}
+		for (int32 th_z = 0; th_z < tree_heigh; th_z++) {
+			int32 index_3dd = treeCenter.X + (treeCenter.Y * chunkLineElements) + ((treeCenter.Z + th_z) * chunkLineElementsP2);
+			chunkFields[index_3dd] = 2;
+		}
+	}
 }
 
 bool FChunkBuilderCalculation::IsThreadActive()
