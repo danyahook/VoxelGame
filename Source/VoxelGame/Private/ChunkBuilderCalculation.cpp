@@ -90,11 +90,14 @@ void FChunkBuilderCalculation::GenerateChunk()
 					if ((x > 2) && (x < chunkLineElements - 2) && (y > 2) && (y < chunkLineElements - 2))
 						treeCenters.Add(FIntVector(x, y, z));
 				}
-				if (RandomStream.FRand() < 0.05 && z == 51 + noise_landscape_2d_val) {
+				if (RandomStream.FRand() < 0.07 && z == 51 + noise_landscape_2d_val) {
 					chunkFields[index_3d] = -1;
 				}
-				if (RandomStream.FRand() < 0.01 && z == 51 + noise_landscape_2d_val) {
+				if (RandomStream.FRand() < 0.02 && z == 51 + noise_landscape_2d_val) {
 					chunkFields[index_3d] = -2;
+				}
+				if (RandomStream.FRand() < 0.003 && z == 51 + noise_landscape_2d_val) {
+					chunkFields[index_3d] = -3;
 				}
 			}
 		}
@@ -152,7 +155,7 @@ void FChunkBuilderCalculation::LakeBuilder(int32 z_axis_min)
 				int32 index_3d = x + (y * chunkLineElements) + (z * chunkLineElementsP2);
 
 				if (noise_lake > 0.44) {
-					if (z >= 41 && z < z_axis_min - 1)
+					if (z >= 41 + (noise_landscape_2d_val / 2) && z < z_axis_min - 1)
 					{
 						chunkFields[index_3d] = 8;
 					}
