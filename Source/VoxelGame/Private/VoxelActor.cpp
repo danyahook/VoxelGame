@@ -78,7 +78,7 @@ void AVoxelActor::CheckChunkBuilder()
 
 void AVoxelActor::OnConstruction(const FTransform& Transform)
 {
-	chunkZElements = 80;
+	chunkZElements = 128;
 	chunkTotalElements = chunkLineElements * chunkLineElements * chunkZElements;
 	chunkLineElementsP2 = chunkLineElements * chunkLineElements;
 	voxelSizeHalf = voxelSize / 2;
@@ -110,7 +110,7 @@ void AVoxelActor::UpdateMesh()
 		{
 			for (int32 z = 0; z < chunkZElements; z++)
 			{
-				int32 index = x + (chunkLineElements * y) + (chunkLineElementsP2 * z);
+				int32 index = x + (chunkLineElements * y + (chunkLineElementsP2 * z));
 				int32 meshIndex = chunkFields[index];
 
 				if (meshIndex > Materials.Num()) {
@@ -137,13 +137,13 @@ void AVoxelActor::UpdateMesh()
 
 						if (meshIndex >= 20)
 							flag = true;
-
+						//else if (newIndex < chunkFields.Num() && newIndex >= 0)
+						//	if (chunkFields[newIndex] < 2) flag = true;
 						else if ((x + bMask[i].X < chunkLineElements) && (x + bMask[i].X >= 0) && (y + bMask[i].Y < chunkLineElements) && (y + bMask[i].Y >= 0) && (z + bMask[i].Z >= 0) && (z + bMask[i].Z < chunkZElements))
 						{
 							if (newIndex < chunkFields.Num() && newIndex >= 0)
 								if (chunkFields[newIndex] < 2) flag = true;
 						}
-
 						else flag = true;
 
 						if (flag)
@@ -164,7 +164,7 @@ void AVoxelActor::UpdateMesh()
 								Vertics.Add(FVector(voxelSizeHalf + (x * voxelSize), -voxelSizeHalf + (y * voxelSize), voxelSizeHalf + (z * voxelSize)));
 								Vertics.Add(FVector(voxelSizeHalf + (x * voxelSize), voxelSizeHalf + (y * voxelSize), voxelSizeHalf + (z * voxelSize)));
 
-								Normals.Append(bNormals0, ARRAY_COUNT(bNormals0));
+								Normals.Append(bNormals0, UE_ARRAY_COUNT(bNormals0));
 								break;
 							}
 							case 1: {
@@ -173,7 +173,7 @@ void AVoxelActor::UpdateMesh()
 								Vertics.Add(FVector(-voxelSizeHalf + (x * voxelSize), voxelSizeHalf + (y * voxelSize), -voxelSizeHalf + (z * voxelSize)));
 								Vertics.Add(FVector(voxelSizeHalf + (x * voxelSize), voxelSizeHalf + (y * voxelSize), -voxelSizeHalf + (z * voxelSize)));
 
-								Normals.Append(bNormals1, ARRAY_COUNT(bNormals1));
+								Normals.Append(bNormals1, UE_ARRAY_COUNT(bNormals1));
 								break;
 							}
 							case 2: {
@@ -182,7 +182,7 @@ void AVoxelActor::UpdateMesh()
 								Vertics.Add(FVector(-voxelSizeHalf + (x * voxelSize), voxelSizeHalf + (y * voxelSize), -voxelSizeHalf + (z * voxelSize)));
 								Vertics.Add(FVector(-voxelSizeHalf + (x * voxelSize), voxelSizeHalf + (y * voxelSize), voxelSizeHalf + (z * voxelSize)));
 
-								Normals.Append(bNormals2, ARRAY_COUNT(bNormals2));
+								Normals.Append(bNormals2, UE_ARRAY_COUNT(bNormals2));
 								break;
 							}
 							case 3: {
@@ -191,7 +191,7 @@ void AVoxelActor::UpdateMesh()
 								Vertics.Add(FVector(voxelSizeHalf + (x * voxelSize), -voxelSizeHalf + (y * voxelSize), -voxelSizeHalf + (z * voxelSize)));
 								Vertics.Add(FVector(voxelSizeHalf + (x * voxelSize), -voxelSizeHalf + (y * voxelSize), voxelSizeHalf + (z * voxelSize)));
 
-								Normals.Append(bNormals3, ARRAY_COUNT(bNormals3));
+								Normals.Append(bNormals3, UE_ARRAY_COUNT(bNormals3));
 								break;
 							}
 							case 4: {
@@ -200,7 +200,7 @@ void AVoxelActor::UpdateMesh()
 								Vertics.Add(FVector(voxelSizeHalf + (x * voxelSize), voxelSizeHalf + (y * voxelSize), -voxelSizeHalf + (z * voxelSize)));
 								Vertics.Add(FVector(voxelSizeHalf + (x * voxelSize), voxelSizeHalf + (y * voxelSize), voxelSizeHalf + (z * voxelSize)));
 
-								Normals.Append(bNormals5, ARRAY_COUNT(bNormals4));
+								Normals.Append(bNormals5, UE_ARRAY_COUNT(bNormals4));
 								break;
 							}
 							case 5: {
@@ -209,12 +209,12 @@ void AVoxelActor::UpdateMesh()
 								Vertics.Add(FVector(-voxelSizeHalf + (x * voxelSize), -voxelSizeHalf + (y * voxelSize), -voxelSizeHalf + (z * voxelSize)));
 								Vertics.Add(FVector(-voxelSizeHalf + (x * voxelSize), -voxelSizeHalf + (y * voxelSize), voxelSizeHalf + (z * voxelSize)));
 
-								Normals.Append(bNormals4, ARRAY_COUNT(bNormals5));
+								Normals.Append(bNormals4, UE_ARRAY_COUNT(bNormals5));
 								break;
 							}
 							}
 
-							UVs.Append(bUVs, ARRAY_COUNT(bUVs));
+							UVs.Append(bUVs, UE_ARRAY_COUNT(bUVs));
 
 							FColor color = FColor(255, 255, 255, i);
 							VertexColor.Add(color); VertexColor.Add(color); VertexColor.Add(color); VertexColor.Add(color);
@@ -224,7 +224,10 @@ void AVoxelActor::UpdateMesh()
 					el_num += triangle_num;
 					meshSections[meshIndex].elementId += triangle_num;
 				}
-
+				else if (meshIndex < 0)
+				{
+					AddInstanceVoxel(FVector(x* voxelSize, y* voxelSize, z* voxelSize), meshIndex);
+				}
 			}
 		}
 	}
@@ -244,4 +247,17 @@ void AVoxelActor::UpdateMesh()
 		s++;
 	}
 
+}
+
+void AVoxelActor::setVoxel(FVector localPos, int32 value)
+{
+	int32 x = localPos.X;
+	int32 y = localPos.Y;
+	int32 z = localPos.Z;
+
+	int32 index = x + (chunkLineElements * y) + (chunkLineElementsP2 * z);
+
+	chunkFields[index] = value;
+
+	UpdateMesh();
 }

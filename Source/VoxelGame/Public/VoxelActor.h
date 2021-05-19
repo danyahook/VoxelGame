@@ -80,6 +80,9 @@ public:
     UFUNCTION(BlueprintCallable)
         void setVoxel(FVector localPos, int32 value);
 
+    UFUNCTION(BlueprintImplementableEvent)
+        void AddInstanceVoxel(FVector instanceLocation, int32 meshType);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

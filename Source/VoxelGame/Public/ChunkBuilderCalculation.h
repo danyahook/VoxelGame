@@ -53,6 +53,10 @@ public:
 	int32 calculateNoiseBedrock2d(int x, int y);
 	int32 calculateNoiseCaves3d(int x, int y, int z);
 
+	void LakeBuilder(int32 z_axis_min);
+
+	float calculateNoiseLake2d(int x, int y);
+
 	bool checkRange(int32 value, int32 range);
 
 private:
