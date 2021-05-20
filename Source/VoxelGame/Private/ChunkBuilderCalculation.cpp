@@ -25,6 +25,7 @@ FChunkBuilderCalculation::FChunkBuilderCalculation(
 		chunkTotalElements = InnerchunkTotalElements;
 		chunkXIndex = InnerchunkXIndex;
 		chunkYIndex = InnerchunkYIndex;
+		chunkYIndex = InnerchunkYIndex;
 	}
 }
 
@@ -43,7 +44,7 @@ void FChunkBuilderCalculation::GenerateChunk()
 	int32 noise_3d_val = 0;
 	int32 noise_landscape_2d_val = 0;
 	int32 noise_bedrock_2d_val = 0;
-	int32 z_axis_min = 256;
+	int32 locLakeLevel = 256;
 
 	for (int x = 0; x < chunkLineElements; x++)
 	{
@@ -79,9 +80,9 @@ void FChunkBuilderCalculation::GenerateChunk()
 				}
 
 				if (noise_lake > 0.44) {
-					if (51 + noise_landscape_2d_val < z_axis_min)
+					if (51 + noise_landscape_2d_val < locLakeLevel)
 					{
-						z_axis_min = 51 + noise_landscape_2d_val;
+						locLakeLevel = 51 + noise_landscape_2d_val;
 					}
 				}
 
@@ -90,7 +91,7 @@ void FChunkBuilderCalculation::GenerateChunk()
 					if ((x > 2) && (x < chunkLineElements - 2) && (y > 2) && (y < chunkLineElements - 2))
 						treeCenters.Add(FIntVector(x, y, z));
 				}
-				if (RandomStream.FRand() < 0.07 && z == 51 + noise_landscape_2d_val) {
+				if (RandomStream.FRand() < 0.09 && z == 51 + noise_landscape_2d_val) {
 					chunkFields[index_3d] = -1;
 				}
 				if (RandomStream.FRand() < 0.02 && z == 51 + noise_landscape_2d_val) {
@@ -98,6 +99,15 @@ void FChunkBuilderCalculation::GenerateChunk()
 				}
 				if (RandomStream.FRand() < 0.003 && z == 51 + noise_landscape_2d_val) {
 					chunkFields[index_3d] = -3;
+				}
+				if (RandomStream.FRand() < 0.005 && z == 51 + noise_landscape_2d_val) {
+					chunkFields[index_3d] = -4;
+				}
+				if (RandomStream.FRand() < 0.003 && z == 51 + noise_landscape_2d_val) {
+					chunkFields[index_3d] = -5;
+				}
+				if (RandomStream.FRand() < 0.0025 && z == 51 + noise_landscape_2d_val) {
+					chunkFields[index_3d] = -6;
 				}
 			}
 		}
@@ -139,7 +149,7 @@ void FChunkBuilderCalculation::GenerateChunk()
 		}
 	}
 
-	LakeBuilder(z_axis_min);
+	LakeBuilder(locLakeLevel);
 }
 
 void FChunkBuilderCalculation::LakeBuilder(int32 z_axis_min)
@@ -243,7 +253,9 @@ int32 FChunkBuilderCalculation::calculateNoiseCaves3d(int x, int y, int z)
 	float _y = (chunkYIndex * chunkLineElements + y) * 0.12;
 	float _z = z * 0.12;
 
-	float noise = SimplexNoise::noise(_x, _y, _z);
+	//float noise = SimplexNoise::noise(_x, _y, _z);
+	const FVector CurrentLocation = FVector(_x, _y, _z);
+	float noise = FMath::PerlinNoise3D(CurrentLocation);
 	float noise_value = noise * 100;
 
 	int32 floor_noise_value = FMath::FloorToInt(noise_value);
