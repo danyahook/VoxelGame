@@ -54,36 +54,29 @@ void FChunkBuilderCalculation::GenerateChunk()
 			{
 				index_3d = x + (y * chunkLineElements) + (z * chunkLineElementsP2);
 				noise_3d_val = calculateNoiseCaves3d(x, y, z);
-				noise_landscape_2d_val = calculateNoiseLandscape2d(x, y);
+				noise_landscape_2d_val = calculateNoiseLandscape2d(x, y, chunkXIndex, chunkYIndex);
 				noise_bedrock_2d_val = calculateNoiseBedrock2d(x, y);
-				float noise_lake = calculateNoiseLake2d(x, y);
+				float noise_lake = calculateNoiseLake2d(x, y, chunkXIndex, chunkYIndex);
 
 				// Landscape and caves generations
 				if (z == 50 + noise_landscape_2d_val) {
-					chunkFields[index_3d] = 3;
+					chunkFields[index_3d] = 11;
 				}
 				else if (z >= 45 + noise_landscape_2d_val && z < 50 + noise_landscape_2d_val) {
-					chunkFields[index_3d] = 4;
+					chunkFields[index_3d] = 12;
 				}
 				else if (z <= 2 + noise_bedrock_2d_val) {
-					chunkFields[index_3d] = 6;
+					chunkFields[index_3d] = 14;
 				}
 				else if (z >= 35 + noise_landscape_2d_val && z < 45 + noise_landscape_2d_val) {
-					chunkFields[index_3d] = 5;
+					chunkFields[index_3d] = 13;
 				}
 				else if (z < 35 + noise_landscape_2d_val && noise_3d_val < 45) {
-					chunkFields[index_3d] = 5;
+					chunkFields[index_3d] = 13;
 				}
 				else {
 					chunkFields[index_3d] = 0;
 
-				}
-
-				if (noise_lake > 0.44) {
-					if (51 + noise_landscape_2d_val < locLakeLevel)
-					{
-						locLakeLevel = 51 + noise_landscape_2d_val;
-					}
 				}
 
 				// Vegetation generations
@@ -115,10 +108,22 @@ void FChunkBuilderCalculation::GenerateChunk()
 
 	for (FIntVector treeCenter : treeCenters)
 	{
+		float type_chance = RandomStream.FRand();
+
 		int32 tree_heigh = RandomStream.RandRange(3, 6);
+		int32 tree_type = RandomStream.RandRange(1, 4);
 		int32 randomX = RandomStream.RandRange(0, 2);
 		int32 randomY = RandomStream.RandRange(0, 2);
 		int32 randomZ = RandomStream.RandRange(0, 2);
+
+		if (type_chance > 0.95)
+			tree_type = 4;
+		else if (type_chance > 0.75)
+			tree_type = 3;
+		else if (type_chance > 0.65)
+			tree_type = 2;
+		else
+			tree_type = 1;
 
 		for (int32 tree_x = -2; tree_x < 2; tree_x++)
 		{
@@ -135,7 +140,7 @@ void FChunkBuilderCalculation::GenerateChunk()
 							if (RandomStream.FRand() < 0.5 || radius <= 1.2)
 							{
 								int32 index_3ddd = (treeCenter.X + tree_x) + ((treeCenter.Y + tree_y) * chunkLineElements) + ((treeCenter.Z + tree_z + tree_heigh) * chunkLineElementsP2);
-								chunkFields[index_3ddd] = 1;
+								chunkFields[index_3ddd] = tree_type;
 							}
 						}
 					}
@@ -145,41 +150,46 @@ void FChunkBuilderCalculation::GenerateChunk()
 
 		for (int32 th_z = 0; th_z < tree_heigh; th_z++) {
 			int32 index_3dd = treeCenter.X + (treeCenter.Y * chunkLineElements) + ((treeCenter.Z + th_z) * chunkLineElementsP2);
-			chunkFields[index_3dd] = 2;
+			chunkFields[index_3dd] = 10;
 		}
+
+		int32 part_index = treeCenter.X + (treeCenter.Y * chunkLineElements) + ((treeCenter.Z + tree_heigh + 3) * chunkLineElementsP2);
+		chunkFields[part_index] = -7;
 	}
 
-	LakeBuilder(locLakeLevel);
+	LakeBuilder();
 }
 
-void FChunkBuilderCalculation::LakeBuilder(int32 z_axis_min)
+void FChunkBuilderCalculation::LakeBuilder()
 {
+	int32 z_axis_min = findLakeLavel(chunkXIndex, chunkYIndex);
+
 	for (int x = 0; x < chunkLineElements; x++)
 	{
 		for (int y = 0; y < chunkLineElements; y++)
 		{
 			for (int z = 0; z < chunkZElements; z++)
 			{
-				int32 noise_landscape_2d_val = calculateNoiseLandscape2d(x, y);
-				float noise_lake = calculateNoiseLake2d(x, y);
+				int32 noise_landscape_2d_val = calculateNoiseLandscape2d(x, y, chunkXIndex, chunkYIndex);
+				float noise_lake = calculateNoiseLake2d(x, y, chunkXIndex, chunkYIndex);
 				int32 index_3d = x + (y * chunkLineElements) + (z * chunkLineElementsP2);
 
-				if (noise_lake > 0.44) {
+				if (noise_lake > 0.51) {
 					if (z >= 41 + (noise_landscape_2d_val / 2) && z < z_axis_min - 1)
 					{
-						chunkFields[index_3d] = 8;
+						chunkFields[index_3d] = 16;
 					}
 					else if (z >= z_axis_min - 1)
 					{
 						chunkFields[index_3d] = 0;
 					}
 				}
-				if (noise_lake >= 0.36 && noise_lake <= 0.44) {
+				if (noise_lake >= 0.46 && noise_lake <= 0.51) {
 					if (z == 50 + noise_landscape_2d_val) {
-						chunkFields[index_3d] = 7;
+						chunkFields[index_3d] = 15;
 					}
 					else if (z >= 45 + noise_landscape_2d_val && z < 50 + noise_landscape_2d_val) {
-						chunkFields[index_3d] = 7;
+						chunkFields[index_3d] = 15;
 					}
 				}
 			}
@@ -205,10 +215,10 @@ void FChunkBuilderCalculation::Stop()
 	bStopThread = true;
 }
 
-int32 FChunkBuilderCalculation::calculateNoiseLandscape2d(int x, int y)
+int32 FChunkBuilderCalculation::calculateNoiseLandscape2d(int x, int y, int locChunkXIndex, int locChunkYIndex)
 {
-	float _x = (chunkXIndex * chunkLineElements + x);
-	float _y = (chunkYIndex * chunkLineElements + y);
+	float _x = (locChunkXIndex * chunkLineElements + x);
+	float _y = (locChunkYIndex * chunkLineElements + y);
 
 	float noise1 = SimplexNoise::noise(_x * 0.01, _y * 0.01) * 4.0f;
 	float noise2 = SimplexNoise::noise(_x * 0.001, _y * 0.001) * 4.0f;
@@ -223,10 +233,10 @@ int32 FChunkBuilderCalculation::calculateNoiseLandscape2d(int x, int y)
 	return floor_noise_value;
 }
 
-float FChunkBuilderCalculation::calculateNoiseLake2d(int x, int y)
+float FChunkBuilderCalculation::calculateNoiseLake2d(int x, int y, int locChunkXIndex, int locChunkYIndex)
 {
-	float _x = (chunkXIndex * chunkLineElements + x);
-	float _y = (chunkYIndex * chunkLineElements + y);
+	float _x = (locChunkXIndex * chunkLineElements + x);
+	float _y = (locChunkYIndex * chunkLineElements + y);
 
 	const FVector2D CurrentLocation = FVector2D(_x / 25.f, _y / 25.f);
 	float noise_lake = FMath::PerlinNoise2D(CurrentLocation);
@@ -266,4 +276,38 @@ int32 FChunkBuilderCalculation::calculateNoiseCaves3d(int x, int y, int z)
 bool FChunkBuilderCalculation::checkRange(int32 value, int32 range)
 {
 	return (value >= 0 && value < range);
+}
+
+int32 FChunkBuilderCalculation::findLakeLavel(int32 pos_x, int32 pos_y)
+{
+	int32 z_axis_min = 128;
+	int32 loc_x = 0;
+	int32 loc_y = 0;
+
+	int32 noise_landscape_2d_val = 0;
+
+	for (int i = -1; i < 2; i++)
+	{
+		loc_x = pos_x - i;
+		for (int j = -1; j < 2; j++)
+		{
+			loc_y = pos_y - j;
+			for (int x = 0; x < chunkLineElements; x++)
+			{
+				for (int y = 0; y < chunkLineElements; y++)
+				{
+					float noise_lake = calculateNoiseLake2d(x, y, loc_x, loc_y);
+					if (noise_lake >= 0.51)
+					{
+						noise_landscape_2d_val = calculateNoiseLandscape2d(x, y, loc_x, loc_y);
+
+						if (51 + noise_landscape_2d_val < z_axis_min)
+							z_axis_min = 51 + noise_landscape_2d_val;
+					}
+				}
+			}
+		}
+	}
+
+	return z_axis_min;
 }
