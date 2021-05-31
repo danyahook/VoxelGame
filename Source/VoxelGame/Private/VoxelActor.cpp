@@ -1,5 +1,6 @@
 #include "VoxelActor.h"
 
+// Векторы нормалалей
 const int32 bTriangles[] = { 2, 1, 0, 0, 3, 2 };
 const FVector2D bUVs[] = { FVector2D(0.000000, 0.000000), FVector2D(0.00000, 1.00000), FVector2D(1.00000, 1.00000), FVector2D(1.00000, 0.000000) };
 const FVector bNormals0[] = { FVector(0, 0, 1), FVector(0, 0, 1), FVector(0, 0, 1), FVector(0, 0, 1) };
@@ -51,6 +52,10 @@ void AVoxelActor::StartThread()
 	GetWorldTimerManager().SetTimer(ChunkTimerHandle, this, &AVoxelActor::CheckChunkBuilder, 0.01f, false);
 }
 
+/*
+	Функция проверят, закончился ли поток
+	для генерации чанка.
+*/
 void AVoxelActor::CheckChunkBuilder()
 {
 	ChunkTimerHandle.Invalidate();
@@ -97,6 +102,9 @@ void AVoxelActor::OnConstruction(const FTransform& Transform)
 	StartThread();
 }
 
+/*
+	Функция для отрисовки чанка
+*/
 void AVoxelActor::UpdateMesh()
 {
 	TArray<FMeshSection> meshSections;
@@ -249,6 +257,9 @@ void AVoxelActor::UpdateMesh()
 
 }
 
+/*
+	Функция удаления/добавления блоков
+*/
 void AVoxelActor::setVoxel(FVector localPos, int32 value)
 {
 	int32 x = localPos.X;
