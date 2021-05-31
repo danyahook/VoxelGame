@@ -29,13 +29,18 @@ FChunkBuilderCalculation::FChunkBuilderCalculation(
 	}
 }
 
+/*
+	Инициализрующая функция
+*/
 bool FChunkBuilderCalculation::Init()
 {
 	bStopThread = false;
 
 	return true;
 }
-
+/*
+	Генерация данных чанка
+*/
 void FChunkBuilderCalculation::GenerateChunk()
 {
 	chunkFields.SetNumUninitialized(chunkTotalElements);
@@ -58,7 +63,7 @@ void FChunkBuilderCalculation::GenerateChunk()
 				noise_bedrock_2d_val = calculateNoiseBedrock2d(x, y);
 				float noise_lake = calculateNoiseLake2d(x, y, chunkXIndex, chunkYIndex);
 
-				// Landscape and caves generations
+				// Генерация ландшафта и пещер
 				if (z == 50 + noise_landscape_2d_val) {
 					chunkFields[index_3d] = 11;
 				}
@@ -79,7 +84,7 @@ void FChunkBuilderCalculation::GenerateChunk()
 
 				}
 
-				// Vegetation generations
+				// Генерация ростительности
 				if (RandomStream.FRand() < 0.065 && z == 51 + noise_landscape_2d_val && noise_landscape_2d_val < 10) {
 					if ((x > 2) && (x < chunkLineElements - 2) && (y > 2) && (y < chunkLineElements - 2))
 						treeCenters.Add(FIntVector(x, y, z));
@@ -106,6 +111,7 @@ void FChunkBuilderCalculation::GenerateChunk()
 		}
 	}
 
+	// Генерация деревьев
 	for (FIntVector treeCenter : treeCenters)
 	{
 		float type_chance = RandomStream.FRand();
@@ -160,6 +166,9 @@ void FChunkBuilderCalculation::GenerateChunk()
 	LakeBuilder();
 }
 
+/*
+	Функция генерации озер
+*/
 void FChunkBuilderCalculation::LakeBuilder()
 {
 	int32 z_axis_min = findLakeLavel(chunkXIndex, chunkYIndex);
@@ -196,12 +205,17 @@ void FChunkBuilderCalculation::LakeBuilder()
 		}
 	}
 }
-
+/*
+	Проверка активен ли поток
+*/
 bool FChunkBuilderCalculation::IsThreadActive()
 {
 	return bStopThread;
 }
 
+/*
+	Запуск потока
+*/
 uint32 FChunkBuilderCalculation::Run()
 {
 	GenerateChunk();
@@ -210,11 +224,17 @@ uint32 FChunkBuilderCalculation::Run()
 	return 0;
 }
 
+/*
+	Стоп потока
+*/
 void FChunkBuilderCalculation::Stop()
 {
 	bStopThread = true;
 }
 
+/*
+	Расчет шума Перлина для генерации ландшафта
+*/
 int32 FChunkBuilderCalculation::calculateNoiseLandscape2d(int x, int y, int locChunkXIndex, int locChunkYIndex)
 {
 	float _x = (locChunkXIndex * chunkLineElements + x);
@@ -233,6 +253,9 @@ int32 FChunkBuilderCalculation::calculateNoiseLandscape2d(int x, int y, int locC
 	return floor_noise_value;
 }
 
+/*
+	Расчет шума Перлина для генерации озер
+*/
 float FChunkBuilderCalculation::calculateNoiseLake2d(int x, int y, int locChunkXIndex, int locChunkYIndex)
 {
 	float _x = (locChunkXIndex * chunkLineElements + x);
@@ -244,6 +267,9 @@ float FChunkBuilderCalculation::calculateNoiseLake2d(int x, int y, int locChunkX
 	return noise_lake;
 }
 
+/*
+	Расчет шума Перлина для генерации нижней части чанка
+*/
 int32 FChunkBuilderCalculation::calculateNoiseBedrock2d(int x, int y)
 {
 	float _x = (chunkXIndex * chunkLineElements + x) * 0.5;
@@ -257,6 +283,9 @@ int32 FChunkBuilderCalculation::calculateNoiseBedrock2d(int x, int y)
 	return floor_noise_value;
 }
 
+/*
+	Расчет шума Перлина для генерации пещер
+*/
 int32 FChunkBuilderCalculation::calculateNoiseCaves3d(int x, int y, int z)
 {
 	float _x = (chunkXIndex * chunkLineElements + x) * 0.12;
@@ -273,11 +302,17 @@ int32 FChunkBuilderCalculation::calculateNoiseCaves3d(int x, int y, int z)
 	return floor_noise_value;
 }
 
+/*
+	Проверка радиуса деревьев
+*/
 bool FChunkBuilderCalculation::checkRange(int32 value, int32 range)
 {
 	return (value >= 0 && value < range);
 }
 
+/*
+	поиск минимального уровня воды
+*/
 int32 FChunkBuilderCalculation::findLakeLavel(int32 pos_x, int32 pos_y)
 {
 	int32 z_axis_min = 128;
