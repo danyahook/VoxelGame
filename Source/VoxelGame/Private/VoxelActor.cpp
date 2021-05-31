@@ -142,7 +142,7 @@ void AVoxelActor::UpdateMesh()
 						else if ((x + bMask[i].X < chunkLineElements) && (x + bMask[i].X >= 0) && (y + bMask[i].Y < chunkLineElements) && (y + bMask[i].Y >= 0) && (z + bMask[i].Z >= 0) && (z + bMask[i].Z < chunkZElements))
 						{
 							if (newIndex < chunkFields.Num() && newIndex >= 0)
-								if (chunkFields[newIndex] < 2) flag = true;
+								if (chunkFields[newIndex] < 10) flag = true;
 						}
 						else flag = true;
 

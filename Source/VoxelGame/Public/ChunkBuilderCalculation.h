@@ -49,13 +49,14 @@ public:
 
 	void GenerateChunk();
 
-	int32 calculateNoiseLandscape2d(int x, int y);
+	int32 calculateNoiseLandscape2d(int x, int y, int locChunkXIndex, int locChunkYIndex);
 	int32 calculateNoiseBedrock2d(int x, int y);
 	int32 calculateNoiseCaves3d(int x, int y, int z);
 
-	void LakeBuilder(int32 z_axis_min);
+	void LakeBuilder();
 
-	float calculateNoiseLake2d(int x, int y);
+	float calculateNoiseLake2d(int x, int y, int locChunkXIndex, int locChunkYIndex);
+	int32 findLakeLavel(int32 pos_x, int32 pos_y);
 
 	bool checkRange(int32 value, int32 range);
 
