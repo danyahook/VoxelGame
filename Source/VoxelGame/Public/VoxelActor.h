@@ -71,7 +71,7 @@ public:
     UPROPERTY()
         int32 voxelSizeHalf;
 
-    UPROPERTY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (EkjxposeOnSpawn = true))
         TArray <int32> chunkFields;
 
     UPROPERTY()
