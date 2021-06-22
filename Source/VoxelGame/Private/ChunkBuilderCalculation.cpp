@@ -118,7 +118,7 @@ void FChunkBuilderCalculation::GenerateChunk()
 					chunkFields[index_3d] = -6;
 				}
 
-				if (RandomStream.FRand() < 0.0001 && z == 51 + noise_landscape_2d_val) {
+				if (RandomStream.FRand() < 0.0005 && z == 51 + noise_landscape_2d_val) {
 					chunkFields[index_3d] = -8;
 				}
 			}
