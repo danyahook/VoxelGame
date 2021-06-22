@@ -74,10 +74,20 @@ void FChunkBuilderCalculation::GenerateChunk()
 					chunkFields[index_3d] = 14;
 				}
 				else if (z >= 35 + noise_landscape_2d_val && z < 45 + noise_landscape_2d_val) {
-					chunkFields[index_3d] = 13;
+					if (noise_3d_val > 21 && noise_3d_val < 24)
+						chunkFields[index_3d] = 18;
+					else if (noise_3d_val < -43 && noise_3d_val > -63)
+						chunkFields[index_3d] = 17;
+					else
+						chunkFields[index_3d] = 13;
 				}
 				else if (z < 35 + noise_landscape_2d_val && noise_3d_val < 45) {
-					chunkFields[index_3d] = 13;
+					if (noise_3d_val > 17 && noise_3d_val < 24)
+						chunkFields[index_3d] = 17;
+					else if (noise_3d_val < -47 && noise_3d_val > -63)
+						chunkFields[index_3d] = 18;
+					else
+						chunkFields[index_3d] = 13;
 				}
 				else {
 					chunkFields[index_3d] = 0;
@@ -106,6 +116,10 @@ void FChunkBuilderCalculation::GenerateChunk()
 				}
 				if (RandomStream.FRand() < 0.0025 && z == 51 + noise_landscape_2d_val) {
 					chunkFields[index_3d] = -6;
+				}
+
+				if (RandomStream.FRand() < 0.0005 && z == 51 + noise_landscape_2d_val) {
+					chunkFields[index_3d] = -8;
 				}
 			}
 		}
